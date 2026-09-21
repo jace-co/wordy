@@ -1,5 +1,8 @@
 package wordy.ast;
 
+import wordy.interpreter.EvaluationContext;
+
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -23,6 +26,15 @@ public class BlockNode extends StatementNode {
 
     public BlockNode(StatementNode... statements) {
         this.statements = Arrays.asList(statements);
+    }
+
+    @Override
+    public void compile(PrintWriter out){
+        out.print("{");
+        for (StatementNode s : statements){
+            s.compile(out);
+        }
+        out.print("}");
     }
 
     @Override
@@ -59,5 +71,14 @@ public class BlockNode extends StatementNode {
     protected String describeAttributes() {
         return "(%d %s)"
             .formatted(statements.size(), statements.size() == 1 ? "child" : "children");
+    }
+
+    @Override
+    protected void doRun(EvaluationContext context) {
+        for (StatementNode s : statements){
+            s.run(context);
+        }
+
+
     }
 }

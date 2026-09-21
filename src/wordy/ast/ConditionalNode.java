@@ -1,5 +1,8 @@
 package wordy.ast;
 
+import wordy.interpreter.EvaluationContext;
+
+import java.io.PrintWriter;
 import java.util.Map;
 import java.util.Objects;
 
@@ -29,6 +32,28 @@ public class ConditionalNode extends StatementNode {
         this.rhs = rhs;
         this.ifTrue = ifTrue;
         this.ifFalse = ifFalse;
+    }
+
+    @Override
+    public void compile(PrintWriter out) {
+
+        out.print("if (");
+        lhs.compile(out);
+
+        if (operator == Operator.EQUALS){
+            out.print("==");
+        } else if (operator == Operator.LESS_THAN){
+            out.print("<");
+        } else if (operator == Operator.GREATER_THAN){
+            out.print(">");
+        }
+
+        rhs.compile(out);
+        out.print(")");
+        ifTrue.compile(out);
+
+        out.print("else ");
+        ifFalse.compile(out);
     }
 
     @Override
@@ -71,5 +96,32 @@ public class ConditionalNode extends StatementNode {
     @Override
     protected String describeAttributes() {
         return "(operator=" + operator + ')';
+    }
+
+    @Override
+    protected void doRun(EvaluationContext context) {
+        double left = lhs.evaluate(context);
+        double right = rhs.evaluate(context);
+
+        if (operator == Operator.EQUALS) {
+            if (left == right){
+                ifTrue.run(context);
+            } else {
+                ifFalse.run(context);
+            }
+        } else if (operator == Operator.GREATER_THAN) {
+            if (left > right) {
+                ifTrue.run(context);
+            } else {
+                ifFalse.run(context);
+            }
+        } else if (operator == Operator.LESS_THAN){
+            if (left < right){
+                ifTrue.run(context);
+            } else {
+                ifFalse.run(context);
+            }
+        }
+
     }
 }

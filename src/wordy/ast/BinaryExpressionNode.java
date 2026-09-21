@@ -1,5 +1,8 @@
 package wordy.ast;
 
+import wordy.interpreter.EvaluationContext;
+
+import java.io.PrintWriter;
 import java.util.Map;
 import java.util.Objects;
 
@@ -20,6 +23,35 @@ public class BinaryExpressionNode extends ExpressionNode {
         this.operator = operator;
         this.lhs = lhs;
         this.rhs = rhs;
+    }
+
+    @Override
+    public void compile(PrintWriter out) {
+
+        if (operator == Operator.EXPONENTIATION){
+            out.print("Math.pow");
+        }
+
+        out.print("(");
+
+        lhs.compile(out);
+        if (operator == Operator.ADDITION) {
+            out.print("+");
+        } else if (operator == Operator.SUBTRACTION) {
+            out.print("-");
+        } else if (operator == Operator.DIVISION){
+            out.print("/");
+        } else if (operator == Operator.MULTIPLICATION) {
+            out.print("*");
+        }
+
+        if (operator == Operator.EXPONENTIATION){
+            out.print(",");
+        }
+
+        rhs.compile(out);
+
+        out.print(")");
     }
 
     @Override
@@ -59,4 +91,24 @@ public class BinaryExpressionNode extends ExpressionNode {
     protected String describeAttributes() {
         return "(operator=" + operator + ')';
     }
+
+    @Override
+    protected double doEvaluate(EvaluationContext context) {
+        double left = lhs.evaluate(context);
+        double right = rhs.evaluate(context);
+
+        if (operator == Operator.ADDITION){
+            return left + right;
+        } else if (operator == Operator.SUBTRACTION){
+            return left - right;
+        } else if (operator == Operator.DIVISION){
+            return left / right;
+        } else if (operator == Operator.MULTIPLICATION){
+            return left * right;
+        } else {
+            return Math.pow(left, right);
+        }
+
+    }
+
 }
