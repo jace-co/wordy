@@ -1,0 +1,11 @@
+AssignmentNode, doEvaluate - I set unnecessary variable names, instead of just putting the values
+directly into the contex.set() method.
+
+BinaryExpressionNode, doEvaluate - What does switch(operator) do? I just made a big fat if/else if chunk.
+I probably should not have assumed the else case would be exponentiation, and should
+instead have had an exception for unrecognized operators.
+
+ConditionalNode, doRun - Smart to divide into smaller methods, that is a much cleaner method.
+
+These are the main differences I spotted. My other note is I need to do a better job of understanding
+how repositories work, and of deleting my comments when I don't need them anymore.
